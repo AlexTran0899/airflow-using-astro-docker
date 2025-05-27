@@ -1,7 +1,12 @@
 from airflow.decorators import dag, task
 from airflow.hooks.base import BaseHook
 from airflow.sensors.base import PokeReturnValue
+from airflow.operators.python import PythonOperator
 from datetime import datetime
+from include.stock_market.tasks import _get_stock_prices
+
+
+SYMBOL = 'NVDA'
 
 @dag(
     start_date = datetime(2025, 5, 27),
@@ -23,6 +28,17 @@ def stock_market():
         print(f"Sensor condition evaluated to: {condition}")
         return PokeReturnValue(is_done=condition, xcom_value=url)
     
-    is_api_available()
+
+    get_stock_prices = PythonOperator(
+        task_id = 'get_stock_price',
+        python_callable = _get_stock_prices,
+        op_kwargs = {
+            'url': '{{ ti.xcom_pull(task_ids="is_api_available")}}',
+            'symbol': SYMBOL
+
+        }
+    )
+
+    is_api_available() >> get_stock_prices
 
 stock_market()
