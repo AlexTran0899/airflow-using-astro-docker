@@ -39,6 +39,14 @@ def stock_market():
         }
     )
 
+    store_prices = PythonOperator(
+        task_id = 'store_prices',
+        python_callable= _store_prices
+
+
+    )
+
+    # notice that you dont neet to use the () with opertors, only with decorators 
     is_api_available() >> get_stock_prices
 
 stock_market()
