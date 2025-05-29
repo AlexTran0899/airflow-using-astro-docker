@@ -52,7 +52,7 @@ if __name__ == '__main__':
             .mode("overwrite") \
             .option("header", "true") \
             .option("delimiter", ",") \
-            .csv(f"s3a://{os.getenv('SPARK_APPLICATION_ARGS')}/formatted_prices")
+            .csv(f"s3a://{os.getenv('SPARK_APPLICATION_ARGS')}/formatted-prices")
 
     app()
     os.system('kill %d' % os.getpid())
